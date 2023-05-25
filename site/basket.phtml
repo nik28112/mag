@@ -1,0 +1,52 @@
+<? 
+$id_bask=$HTTP_COOKIE_VARS["id_bask"]; 
+ 
+$title="Ваша корзина"; 
+$color="#ddaaff"; include("header.phtml"); include("connect.phtml"); 
+ 
+$strSQL1="SELECT COUNT(*) as count FROM basket_books  
+     WHERE id_bask='".$id_bask."'"; 
+$result1=mysql_query($strSQL1)  
+     or die("Не могу выполнить запрос1!"); 
+$row=mysql_fetch_array($result1); if($row["count"]==0) 
+{ 
+?> 
+ 	<tr><td bgcolor='#ff9999' align='center'> 
+        <b>Ваша корзина пуста!</b></td></tr> <? 
+} else 
+{ 
+$strSQL1="SELECT image, author, name_book, pages, price, kolvo,       id_bask, books.id_book FROM books, basket_books WHERE       books.id_book=basket_books.id_book AND 
+id_bask='".$id_bask."'"; 
+$result1=mysql_query($strSQL1) or die("Не могу выполнить запрос2!"); ?> 
+<tr><td> 
+<table border="1" width="100%" align="right" > 
+<tr><td align="right"><i>Автор: </i></td> 
+<td align="right"><i>Название: </i></td> 
+<td align="right"><i>Цена: </i></td> 
+<td align="right"><i>Количество: </i></td> 
+<td></td></tr> 
+<? $sum=0;  
+while($row=mysql_fetch_array($result1))  
+{ 
+?> 
+  <tr> 
+  <td><?print $row["author"];?></td> 
+  <td><b><?print $row["name_book"];?></b></td>   <td><?print $row["price"];?></td>   <td><?print $row["kolvo"];?>  
+  <a href="dobasket.phtml?type=1&id_book= 
+     <?print $row["id_book"];?>" title="Увеличить">[ + ]</a>  
+  <a href="dobasket.phtml?type=2&id_book= 
+     <?print $row["id_book"];?>" title="Уменьшить">[ - ]</a>   
+  </td> 
+  <td> <a href="dobasket.phtml?type=3&id_book= 
+     <?print $row["id_book"];?>">Удалить</a></td> </tr> 
+<? 
+  $sum=$sum+$row["price"]*$row["kolvo"]; }?> 
+<tr><td align="right"></td><td align="right"><i>ИТОГО: </i></td><td align="right"><?print $sum;?></td><td align="right"></td></tr> 
+</table> 
+<tr><td><center><a href=dobasket.phtml?type=4> 
+<b>Очистить корзину</b></a></center></td></tr> 
+<tr><td><center><a href="order.phtml"> 
+<b>Оформить заказ</b></a></center></td></tr> 
+<? } 
+include("footer.phtml"); 
+?> 

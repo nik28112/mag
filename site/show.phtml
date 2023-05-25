@@ -1,0 +1,62 @@
+<? 
+$id_publ=$HTTP_GET_VARS["id_publ"]; 
+$id_cat=$HTTP_GET_VARS["id_cat"]; 
+$type=$HTTP_GET_VARS["type"]; 
+ 
+include("connect.phtml"); 
+ 
+if ($type==1) 
+{ 
+$strSQL1="SELECT name_publ FROM  publishers WHERE 
+id_publ=".$id_publ; 
+$result=mysql_query($strSQL1)       or die("Не могу выполнить запрос1!"); if($row=mysql_fetch_array($result))  
+ 	$title=$row["name_publ"]; 
+$strSQL1="SELECT id_book, image, author, name_book, 
+books.id_publ, name_publ, pages, price, books.id_cat, name_cat  FROM books, publishers, categories WHERE books.id_cat=categories.id_cat AND 
+books.id_publ=publishers.id_publ AND books.id_publ=".$id_publ; 
+} 
+if ($type==2) 
+{ 
+$strSQL1="SELECT name_cat FROM  categories WHERE id_cat=".$id_cat; 
+$result=mysql_query($strSQL1)       or die("Не могу выполнить запрос1!"); if($row=mysql_fetch_array($result))  
+ 	$title=$row["name_cat"]; 
+$strSQL1="SELECT id_book, image, author, name_book, 
+books.id_publ, name_publ, pages, price, books.id_cat, name_cat  FROM books, publishers, categories WHERE books.id_cat=categories.id_cat AND 
+books.id_publ=publishers.id_publ AND books.id_cat=".$id_cat; 
+} 
+$result1=mysql_query($strSQL1) or die("Не могу выполнить запрос2!"); 
+ 
+include("header.phtml"); 
+?> 
+<tr><td> 
+<table border="1" width="100%" align="right" > 
+<? while($row=mysql_fetch_array($result1))  {?> 
+  <tr> 
+  <td align="center"><img src="images/<?print $row["image"];?>"             alt="<?print $row["name_book"];?>" border="0"> 
+   <center><a href="dobasket.phtml?type=1&id_book= 
+       <?print $row["id_book"];?>"> 
+       <font size=-1>положить в корзину</font></a></center></td> 
+  <td> 
+  <table> 
+  <tr><td align="right"><i>Автор: </i></td> 
+   <td><?print $row["author"];?></td></tr> 
+  <tr><td align="right"><i>Название: </i></td> 
+   <td><?print $row["name_book"];?></td></tr> 
+  <tr><td align="right"><i>Издательство: </i></td> 
+   <td><a href="show.phtml?type=1&id_publ= 
+    <?print $row["id_publ"];?>"><?print $row["name_publ"];?></a> 
+   </td></tr> 
+  <tr><td align="right"><i>Количество страниц: </i></td>    <td><?print $row["pages"];?></td></tr> 
+  <tr><td align="right"><i>Цена: </i></td>    <td><?print $row["price"];?></td></tr> 
+  <tr><td align="right"><i>Категория: </i></td> 
+   <td><a href="show.phtml?type=2&id_cat= 
+    <?print $row["id_cat"];?>"><?print $row["name_cat"];?></a> 
+   </td></tr> 
+  </table> 
+  </td> 
+  </tr> 
+<?}?> 
+</table> 
+</td></tr> 
+<? include("footer.phtml"); 
+?> 

@@ -1,0 +1,49 @@
+$log=$HTTP_SESSION_VARS["log"]; 
+$id=$HTTP_SESSION_VARS["id"]; 
+$id_bask=$HTTP_COOKIE_VARS["id_bask"]; 
+$dostavka=$HTTP_POST_VARS["dostavka"]; 
+$bonus=$HTTP_POST_VARS["bonus"]; 
+ 
+$title="Ваш заказ";   
+$color="#ffaaff"; 
+ 
+include("connect.phtml"); 
+ 
+if(!isset($log)) 
+       $message="<tr><td bgcolor='#ff9999' align='center'>         <b>Вы не авторизованы!!!</b></td></tr>"; else  
+{ 
+     $strSQL1="SELECT COUNT(*) as count FROM basket_books  
+        WHERE id_bask='".$id_bask."'"; 
+     $result1=mysql_query($strSQL1)          or die("Не могу выполнить запрос2!"); 
+     $row=mysql_fetch_array($result1);      if($row["count"]==0) 
+        $message="<tr><td bgcolor='#ff9999' align='center'>  
+           <b>Ваша корзина пуста!</b></td></tr>";      else 
+     { 
+        // создаем новый заказ 
+    $order=uniqid("OR"); 
+        $strSQL="INSERT INTO orders  
+          (id_order, date_ord, id_cust, dostavka, bonus)  
+          VALUES ('".$order."',CURDATE(),".$id.", 
+          '".$dostavka."','".$bonus."')";     mysql_query($strSQL)  
+           or die("Не могу выполнить запрос1!"); 
+    // читаем все из корзины покупателя 
+    $strSQL="SELECT * FROM basket_books  
+         WHERE id_bask='".$id_bask."'"; 
+    $result=mysql_query($strSQL)  
+           or die("Не могу выполнить запрос2!");     while ($row=mysql_fetch_array($result)) 
+{ 
+  // и переписываем в состав заказа 
+  $strSQL="INSERT INTO order_books (id_order, id_book,        kolvo) VALUES ('".$order."',".$row["id_book"]. 
+      ",".$row["kolvo"].")";   mysql_query($strSQL)  
+       or die("Не могу выполнить запрос3!"); } 
+    // очищаем корзину покупателя 
+    $strSQL="DELETE FROM basket_books  
+         WHERE id_bask='".$id_bask."'"; 
+    mysql_query($strSQL)  
+         or die("Не могу выполнить запрос4!"); 
+	    $uniq_ID=uniqid("ID"); 	 
+        setcookie("id_bask", $uniq_ID, time()+60*60*24*14);     $message="<tr><td bgcolor='#66cc66' align='center'> 
+       <b>Ваш заказ отправлен</b></td></tr>"; 
+  } } 
+include("header.phtml"); print $message; 
+include("footer.phtml"); ?> 

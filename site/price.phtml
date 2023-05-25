@@ -1,0 +1,23 @@
+<? header ("Content-type: text/xml"); 
+print "<?xml version=\"1.0\" encoding=\"windows-1251\" ?>"; 
+  
+include("connect.phtml"); 
+$strSQL1="SELECT * FROM publishers ORDER BY name_publ"; 
+$result1=mysql_query($strSQL1) or die("Не могу выполнить запрос1!"); 
+ 
+print "<прайс-лист>"; 
+while($row=mysql_fetch_array($result1))  
+{ 
+  print "<издатель 
+код='".$row["id_publ"]."'>".$row["name_publ"]; 
+  $strSQL2="SELECT id_book, author, name_book, pages, price, name_cat  FROM books, categories WHERE books.id_cat=categories.id_cat AND books.id_publ=".$row["id_publ"]; 
+  $result2=mysql_query($strSQL2) or die("Не могу выполнить запрос2!"); 
+  while($row2=mysql_fetch_array($result2))  
+  { 
+    print "<книга Автор='".$row2["author"]."' 
+Название='".$row2["name_book"]. "'>";     print "<страниц>".$row2["pages"]."</страниц>";     print "<цена>".$row2["price"]."</цена>";     print "<категория>".$row2["name_cat"]."</категория>";     print "</книга>"; 
+  } 
+  print "</издатель>"; 
+} 
+print "</прайс-лист>"; mysql_close(); 
+?> 

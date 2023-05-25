@@ -1,0 +1,25 @@
+<? 
+$fam=$HTTP_POST_VARS["fam"]; 
+$im=$HTTP_POST_VARS["im"]; 
+$addr=$HTTP_POST_VARS["addr"]; 
+$mail=$HTTP_POST_VARS["mail"]; 
+$id=$HTTP_SESSION_VARS["id"]; 
+$subscribe=$HTTP_POST_VARS["subscribe"]; 
+ 
+$title="Регистрация"; 
+$color="#aaaaff"; 
+ 
+include("connect.phtml"); 
+ 
+if($fam!="" && $im!="" && $addr!="" && $mail!="") 
+{ 
+    $strSQL1="UPDATE customers SET fam='".$fam."',            im='".$im."',addr='".$addr."', mail='".$mail."',                 subscribe='".$subscribe."' WHERE id_cust=".$id; 
+$result1=mysql_query($strSQL1)      or die("Не могу выполнить запрос!"); $HTTP_SESSION_VARS["log"]=$fam." ".$im; 
+ 	// обновили значение сеансовой переменной 
+$message="<tr><td bgcolor='#66cc66' align='center'> 
+   <b>Изменения данных выполнены</b></td></tr>"; 
+} else  
+$message="<tr><td bgcolor='#ff9999' align='center'> 
+    <b>Не все поля заполнены!!!</b></td></tr>"; include("header.phtml"); print $message; 
+ 
+include("footer.phtml"); ?>

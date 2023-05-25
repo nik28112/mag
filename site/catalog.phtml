@@ -1,0 +1,38 @@
+<? 
+$title="Каталог"; 
+$color="#aaddff"; 
+ 
+include("header.phtml"); include("connect.phtml"); 
+  
+$strSQL1="SELECT * FROM publishers ORDER BY name_publ"; 
+$result1=mysql_query($strSQL1)  
+     or die("Не могу выполнить запрос!"); 
+$strSQL2="SELECT * FROM categories ORDER BY name_cat"; 
+$result2=mysql_query($strSQL2)  
+     or die("Не могу выполнить запрос!"); 
+?> 
+<tr><td> 
+<table border=0 width=100%> 
+<tr><td width="50%"><center><h3>Издатели</h3></center><ul> 
+<?  
+while($row=mysql_fetch_array($result1))  {?> 
+ 	<li><a href="show.phtml?type=1&id_publ= 
+         <?print $row["id_publ"];?>"> 
+           <?print $row["name_publ"];?></a> 
+<?}?> 
+</ul></td> 
+ 
+<td width="50%"><center><h3>Категории</h3></center><ul> 
+<?  
+while($row=mysql_fetch_array($result2))  {?> 
+ 	<li><a href="show.phtml?type=2&id_cat= 
+         <?print $row["id_cat"];?>"> 
+           <?print $row["name_cat"];?></a> 
+<?}?> 
+</ul></td> 
+</tr> 
+</table> 
+</td></tr> 
+<? 
+include("footer.phtml"); mysql_close(); 
+?>
